@@ -9,4 +9,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - …
 
-[Unreleased]: https://github.com/projectsyn/component-cluster-backup/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/projectsyn/component-cluster-backup/compare/11573bc...HEAD

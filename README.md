@@ -1,6 +1,6 @@
 # Commodore Component: cluster-backup
 
-This is a [Commodore][commodore] Component for cluster-backup.
+This is a [Commodore][commodore] Component for managing backups of a cluster.
 
 This repository is part of Project Syn.
 For documentation on Project Syn and this component, see https://syn.tools.
