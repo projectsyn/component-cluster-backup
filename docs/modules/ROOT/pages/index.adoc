@@ -1,0 +1,5 @@
+= cluster-backup
+
+cluster-backup is a Commodore component to manage cluster-backup.
+
+See the xref:references/parameters.adoc[parameters] reference for further details.
