@@ -4,7 +4,7 @@ parameters:
     keepjobs: 5
     password: '?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/password}'
     bucket:
-      name: k8s-objects
+      name: '${cluster:name}-cluster-backup'
       accesskey: '?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/s3_access_key}'
       secretkey: '?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/s3_secret_key}'
     images:
