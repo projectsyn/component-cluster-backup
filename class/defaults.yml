@@ -1,6 +1,9 @@
 parameters:
   cluster_backup:
     namespace: syn-cluster-backup
+    keepjobs: 5
+    bucket:
+      name: k8s-objects
     images:
       object_dumper:
         image: docker.io/projectsyn/k8s-object-dumper
