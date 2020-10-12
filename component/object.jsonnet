@@ -28,16 +28,29 @@ local binding = kube.ClusterRoleBinding('cluster-backup-object-reader') {
 
 local objectDumper =
   local image = params.images.object_dumper;
-  backup.PreBackupPod(
+  local pod = backup.PreBackupPod(
     'object-dumper',
     '%s:%s' % [ image.image, image.tag ],
     '/usr/local/bin/dump-objects -sd /data',
     fileext='.tar.gz'
-  ) + namespace + {
+  ) + namespace;
+  pod {
     spec+: {
       pod+: {
         spec+: {
           serviceAccountName: sa.metadata.name,
+          containers: [
+            pod.spec.pod.spec.containers[0] {
+              volumeMounts: [ {
+                name: 'data',
+                mountPath: '/data',
+              } ],
+            },
+          ],
+          volumes: [ {
+            name: 'data',
+            emptyDir: {},
+          } ],
         },
       },
     },
