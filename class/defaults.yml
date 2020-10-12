@@ -2,8 +2,11 @@ parameters:
   cluster_backup:
     namespace: syn-cluster-backup
     keepjobs: 5
+    password: '?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/password}'
     bucket:
       name: k8s-objects
+      accesskey: '?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/s3_access_key}'
+      secretkey: '?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/s3_secret_key}'
     images:
       object_dumper:
         image: docker.io/projectsyn/k8s-object-dumper
