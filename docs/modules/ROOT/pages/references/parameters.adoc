@@ -10,10 +10,86 @@ default:: `syn-cluster-backup`
 
 The namespace in which to deploy this component.
 
+== `bucket`
+
+[horizontal]
+type:: dictionary
+
+Holds the name and credentials for an S3 type storage bucket.
+This bucket will be used to store the backups.
+
+=== `accesskey`
+
+[horizontal]
+type:: string
+default:: `'?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/s3_access_key}'`
+
+The access key needed to access the storage bucket.
+The default is a reference to a secret within Vault.
+
+=== `name`
+
+[horizontal]
+type:: string
+default:: `${cluster:name}-cluster-backup`
+
+The name of the storage bucket.
+
+=== `secretkey`
+
+[horizontal]
+type:: string
+default:: `?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/s3_secret_key}`
+
+The secret key needed to access the storage bucket.
+The default is a reference to a secret within Vault.
+
+== `images`
+
+[horizontal]
+type:: dictionary
+
+Dictionary holding the container image versions used by this component.
+
+=== `object_dumper`
+
+[horizontal]
+type:: dictionary
+default::
++
+[source,yaml]
+----
+image: docker.io/projectsyn/k8s-object-dumper
+tag: latest
+----
+
+Object dumper is script that exports all retreivalbe objects from a Kubernetes API and dumps them as a Tar archive.
+See https://github.com/projectsyn/k8s-object-dumper.
+
+=== `keepjobs`
+
+[horizontal]
+type:: number
+default:: `5`
+
+Number of backup jobs to keep.
+
+== `password`
+
+[horizontal]
+type:: string
+default:: `?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/password}'`
+
+Password used to encrypt the backup.
+The default is a reference to a secret within Vault.
 
 == Example
 
 [source,yaml]
 ----
-namespace: example-namespace
+parameters:
+  cluster_backup:
+    images:
+      object_dumper:
+        tag: v…
 ----

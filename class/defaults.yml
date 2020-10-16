@@ -1,3 +1,46 @@
 parameters:
   cluster_backup:
     namespace: syn-cluster-backup
+    keepjobs: 5
+    password: '?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/password}'
+    bucket:
+      name: '${cluster:name}-cluster-backup'
+      accesskey: '?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/s3_access_key}'
+      secretkey: '?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/s3_secret_key}'
+    known_to_fail:
+      - '.+mutators'
+      - '.+reviews'
+      - '.+validators'
+      - 'bindings'
+      - 'deploymentconfigrollbacks'
+      - 'imagesignatures'
+      - 'imagestreamimages'
+      - 'imagestreamimports'
+      - 'imagestreammappings'
+      - 'mutations'
+      - 'useridentitymappings'
+      - 'validations'
+    must_exist:
+      - 'configmaps'
+      - 'daemonsets'
+      - 'deployments'
+      - 'endpoints'
+      - 'horizontalpodautoscalers'
+      - 'ingresses'
+      - 'jobs'
+      - 'limitranges'
+      - 'namespaces'
+      - 'nodes'
+      - 'persistentvolumeclaims'
+      - 'persistentvolumes'
+      - 'replicasets'
+      - 'resourcequotas'
+      - 'roles'
+      - 'secrets'
+      - 'serviceaccounts'
+      - 'services'
+      - 'statefulsets'
+    images:
+      object_dumper:
+        image: docker.io/projectsyn/k8s-object-dumper
+        tag: v0.1.0
