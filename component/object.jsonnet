@@ -16,7 +16,7 @@ local role = kube.ClusterRole('cluster-backup-object-reader') {
     {
       apiGroups: [ '*' ],
       resources: [ '*' ],
-      verbs: [ 'view', 'list' ],
+      verbs: [ 'get', 'list' ],
     },
   ],
 };
