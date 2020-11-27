@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - backup of individual objects ([#3])
+- Option to disable the component via hierarchy
 
 [Unreleased]: https://github.com/projectsyn/component-cluster-backup/compare/11573bc...HEAD
 

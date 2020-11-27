@@ -5,6 +5,6 @@ local argocd = import 'lib/argocd.libjsonnet';
 
 local app = argocd.App('cluster-backup', params.namespace);
 
-{
+if params.enabled then {
   'cluster-backup': app,
-}
+} else {}
