@@ -95,6 +95,62 @@ default:: `?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/password}'`
 Password used to encrypt the backup.
 The default is a reference to a secret within Vault.
 
+== `known_to_fail`
+
+[horizontal]
+type:: list
+default::
++
+[source,yaml]
+----
+- '.+mutators'
+- '.+reviews'
+- '.+validators'
+- 'bindings'
+- 'deploymentconfigrollbacks'
+- 'imagesignatures'
+- 'imagestreamimages'
+- 'imagestreamimports'
+- 'imagestreammappings'
+- 'mutations'
+- 'projectrequests'
+- 'useridentitymappings'
+- 'validations'
+----
+
+Resource types which are known as producing errors when doing `kubectl get <resource>`.
+
+== `must_exist`
+
+[horizontal]
+type:: list
+default::
++
+[source,yaml]
+----
+- 'configmaps'
+- 'daemonsets'
+- 'deployments'
+- 'endpoints'
+- 'horizontalpodautoscalers'
+- 'ingresses'
+- 'jobs'
+- 'limitranges'
+- 'namespaces'
+- 'nodes'
+- 'persistentvolumeclaims'
+- 'persistentvolumes'
+- 'replicasets'
+- 'resourcequotas'
+- 'roles'
+- 'secrets'
+- 'serviceaccounts'
+- 'services'
+- 'statefulsets'
+----
+
+Resource types which must exist on any Kubernetes cluster.
+
 == Example
 
 [source,yaml]
