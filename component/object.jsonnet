@@ -48,10 +48,20 @@ local objectDumper =
           serviceAccountName: sa.metadata.name,
           containers: [
             pod.spec.pod.spec.containers[0] {
+              env: [
+                {
+                  name: 'HOME',
+                  value: '/home/dumper',
+                },
+              ],
               volumeMounts: [
                 {
                   name: 'data',
                   mountPath: '/data',
+                },
+                {
+                  name: 'home',
+                  mountPath: '/home/dumper',
                 },
                 {
                   name: 'config',
@@ -63,6 +73,10 @@ local objectDumper =
           volumes: [
             {
               name: 'data',
+              emptyDir: {},
+            },
+            {
+              name: 'home',
               emptyDir: {},
             },
             {
