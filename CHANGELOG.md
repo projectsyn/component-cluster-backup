@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - backup of individual objects ([#3])
 - Option to disable the component via hierarchy
+- Fix slow object dumping on OpenShift 4 ([#6])
 
 [Unreleased]: https://github.com/projectsyn/component-cluster-backup/compare/11573bc...HEAD
 
 [#3]: https://github.com/projectsyn/component-cluster-backup/pull/3
+[#6]: https://github.com/projectsyn/component-cluster-backup/pull/6
