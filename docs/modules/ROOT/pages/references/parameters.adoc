@@ -118,7 +118,7 @@ default::
 - 'validations'
 ----
 
-Resource types which are known as producing errors when doing `kubectl get <resource>`.
+Resource types which are known to produce errors when doing `kubectl get <resource>`.
 
 == `must_exist`
 
