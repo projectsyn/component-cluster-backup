@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update object-dumper image default tag to v0.1.1 ([#8])
 - Update object-dumper image default tag to v0.2.0 ([#9])
+- Revert object-dumper image default tag to v0.1.1 ([#10])
 
 [Unreleased]: https://github.com/projectsyn/component-cluster-backup/compare/11573bc...HEAD
 
@@ -24,3 +25,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#7]: https://github.com/projectsyn/component-cluster-backup/pull/7
 [#8]: https://github.com/projectsyn/component-cluster-backup/pull/8
 [#9]: https://github.com/projectsyn/component-cluster-backup/pull/9
+[#10]: https://github.com/projectsyn/component-cluster-backup/pull/10
