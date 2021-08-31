@@ -1,0 +1,74 @@
+apiVersion: backup.appuio.ch/v1alpha1
+kind: PreBackupPod
+metadata:
+  name: etcd-backup
+  namespace: syn-cluster-backup
+spec:
+  backupCommand: tar czf - /host/mnt/backup/*.{db,tar.gz}
+  fileExtension: .tar.gz
+  pod:
+    spec:
+      containers:
+        - args: []
+          command:
+            - tail
+            - -f
+            - /dev/null
+          env: []
+          image: docker.io/debian:bullseye
+          imagePullPolicy: IfNotPresent
+          name: etcd-backup
+          ports: []
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          stdin: false
+          tty: false
+          volumeMounts:
+            - mountPath: /host
+              name: host
+            - mountPath: /host/mnt/backup
+              name: backup
+      hostNetwork: true
+      imagePullSecrets: []
+      initContainers:
+        - args:
+            - /usr/local/bin/cluster-backup.sh
+            - /mnt/backup
+          command:
+            - chroot
+            - /host
+          env: []
+          image: docker.io/debian:bullseye
+          imagePullPolicy: IfNotPresent
+          name: dump-database
+          ports: []
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          stdin: false
+          tty: false
+          volumeMounts:
+            - mountPath: /host
+              name: host
+            - mountPath: /host/mnt/backup
+              name: backup
+      nodeSelector:
+        node-role.kubernetes.io/master: ''
+      terminationGracePeriodSeconds: 30
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: Exists
+      volumes:
+        - hostPath:
+            path: /
+            type: Directory
+          name: host
+        - emptyDir: {}
+          name: backup

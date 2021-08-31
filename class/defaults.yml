@@ -49,3 +49,7 @@ parameters:
       object_dumper:
         image: docker.io/projectsyn/k8s-object-dumper
         tag: v0.2.3
+      etcd_backup:
+        registry: docker.io
+        image: debian
+        tag: bullseye

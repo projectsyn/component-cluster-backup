@@ -47,7 +47,15 @@ local schedule =
 
 // Define outputs below
 {
-  '01_namespace': kube.Namespace(params.namespace),
+  '01_namespace': kube.Namespace(params.namespace) {
+    metadata+: {
+      annotations+: {
+        // Jobs must be allowed on master nodes to backup etcd
+        'openshift.io/node-selector': '',
+      },
+    },
+  },
   '05_schedule': [ backupSecret, bucketSecret, schedule ],
   '10_object': import 'object.jsonnet',
+  '20_etcd': import 'etcd.jsonnet',
 }
