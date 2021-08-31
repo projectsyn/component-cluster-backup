@@ -6,4 +6,4 @@
 
 docs/antora.yml:
   name: cluster-backup
-  title: cluster-backup
+  title: Cluster Backup
