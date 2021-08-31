@@ -1,0 +1,9 @@
+:global:
+  componentName: cluster-backup
+  githubUrl: https://github.com/projectsyn/component-cluster-backup
+  feature_goUnitTests: false
+  feature_goldenTests: true
+
+docs/antora.yml:
+  name: cluster-backup
+  title: Cluster Backup
