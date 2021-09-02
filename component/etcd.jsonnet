@@ -4,6 +4,44 @@ local kube = import 'lib/kube.libjsonnet';
 local inv = kap.inventory();
 local params = inv.parameters.cluster_backup;
 
+local serviceAccount = kube.ServiceAccount('etcd-backup');
+
+local scc = kube._Object('security.openshift.io/v1', 'SecurityContextConstraints', 'etcd-backup') {
+  allowPrivilegedContainer: true,
+  allowHostNetwork: true,
+  allowHostDirVolumePlugin: true,
+  allowedCapabilities: [],
+  allowHostPorts: false,
+  allowHostPID: false,
+  allowHostIPC: false,
+  readOnlyRootFilesystem: true,
+  requiredDropCapabilities: [],
+  defaultAddCapabilities: [],
+  runAsUser: {
+    type: 'RunAsAny',
+  },
+  seLinuxContext: {
+    type: 'MustRunAs',
+  },
+  fsGroup: {
+    type: 'MustRunAs',
+  },
+  supplementalGroups: {
+    type: 'RunAsAny',
+  },
+  volumes: [
+    'configMap',
+    'downwardAPI',
+    'emptyDir',
+    'hostPath',
+    'projected',
+    'secret',
+  ],
+  users: [
+    'system:serviceaccount:%s:%s' % [ params.namespace, serviceAccount.metadata.name ],
+  ],
+};
+
 local etcdBackup =
   local image = params.images.etcd_backup;
   local pod = backup.PreBackupPod(
@@ -19,6 +57,7 @@ local etcdBackup =
     spec+: {
       pod+: {
         spec+: {
+          serviceAccountName: serviceAccount.metadata.name,
           initContainers: [
             kube.Container('dump-database') {
               image: '%s/%s:%s' % [ image.registry, image.image, image.tag ],
@@ -97,5 +136,7 @@ local etcdBackup =
   };
 
 [
+  serviceAccount,
+  scc,
   etcdBackup,
 ]

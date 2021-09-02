@@ -1,3 +1,46 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations: {}
+  labels:
+    name: etcd-backup
+  name: etcd-backup
+---
+allowHostDirVolumePlugin: true
+allowHostIPC: false
+allowHostNetwork: true
+allowHostPID: false
+allowHostPorts: false
+allowPrivilegedContainer: true
+allowedCapabilities: []
+apiVersion: security.openshift.io/v1
+defaultAddCapabilities: []
+fsGroup:
+  type: MustRunAs
+kind: SecurityContextConstraints
+metadata:
+  annotations: {}
+  labels:
+    name: etcd-backup
+  name: etcd-backup
+readOnlyRootFilesystem: true
+requiredDropCapabilities: []
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: MustRunAs
+supplementalGroups:
+  type: RunAsAny
+users:
+  - system:serviceaccount:syn-cluster-backup:etcd-backup
+volumes:
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - hostPath
+  - projected
+  - secret
+---
 apiVersion: backup.appuio.ch/v1alpha1
 kind: PreBackupPod
 metadata:
@@ -60,6 +103,7 @@ spec:
               name: backup
       nodeSelector:
         node-role.kubernetes.io/master: ''
+      serviceAccountName: etcd-backup
       terminationGracePeriodSeconds: 30
       tolerations:
         - effect: NoSchedule
