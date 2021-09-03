@@ -4,9 +4,25 @@ local kube = import 'lib/kube.libjsonnet';
 local inv = kap.inventory();
 local params = inv.parameters.cluster_backup;
 
-local serviceAccount = kube.ServiceAccount('etcd-backup');
+local schedule = import 'schedule.libsonnet';
 
-local scc = kube._Object('security.openshift.io/v1', 'SecurityContextConstraints', 'etcd-backup') {
+local namespaceName = params.etcd_backup_namespace;
+local privilegedNamespace = kube.Namespace(namespaceName) {
+  metadata+: {
+    annotations+: {
+      // Jobs must be allowed on master nodes to backup etcd
+      'openshift.io/node-selector': '',
+    },
+  },
+};
+
+local serviceAccount = kube.ServiceAccount('etcd-backup') {
+  metadata+: {
+    namespace: namespaceName,
+  },
+};
+
+local scc = kube._Object('security.openshift.io/v1', 'SecurityContextConstraints', params.etcd_backup_namespace) {
   allowPrivilegedContainer: true,
   allowHostNetwork: true,
   allowHostDirVolumePlugin: true,
@@ -38,7 +54,7 @@ local scc = kube._Object('security.openshift.io/v1', 'SecurityContextConstraints
     'secret',
   ],
   users: [
-    'system:serviceaccount:%s:%s' % [ params.namespace, serviceAccount.metadata.name ],
+    'system:serviceaccount:%s:%s' % [ namespaceName, serviceAccount.metadata.name ],
   ],
 };
 
@@ -52,7 +68,7 @@ local etcdBackup =
   );
   pod {
     metadata+: {
-      namespace: params.namespace,
+      namespace: namespaceName,
     },
     spec+: {
       pod+: {
@@ -136,7 +152,8 @@ local etcdBackup =
   };
 
 [
+  privilegedNamespace,
   serviceAccount,
   scc,
   etcdBackup,
-]
+] + schedule.Schedule('etcd', namespaceName, '%d 3 * * *' % schedule.RandomMinute(namespaceName))

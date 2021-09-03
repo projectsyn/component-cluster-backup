@@ -5,6 +5,7 @@ parameters:
     # See: https://github.com/projectsyn/commodore/issues/71
     enabled: true
     namespace: syn-cluster-backup
+    etcd_backup_namespace: ${cluster_backup:namespace}-etcd
     keepjobs: 5
     password: '?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/password}'
     bucket:
