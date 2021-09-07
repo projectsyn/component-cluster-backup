@@ -5,6 +5,16 @@ local kube = import 'lib/kube.libjsonnet';
 local inv = kap.inventory();
 local params = inv.parameters.cluster_backup;
 
+local onOpenshift = inv.parameters.facts.distribution == 'openshift4';
+
+local nsLabels =
+  if onOpenshift then
+    {
+      'network.openshift.io/policy-group': 'monitoring',
+    }
+  else
+    {};
+
 local backupSecret = kube.Secret('objects-backup-password') {
   stringData: {
     password: params.password,
@@ -47,7 +57,11 @@ local schedule =
 
 // Define outputs below
 {
-  '01_namespace': kube.Namespace(params.namespace),
+  '01_namespace': kube.Namespace(params.namespace) {
+    metadata+: {
+      labels+: nsLabels,
+    },
+  },
   '05_schedule': [ backupSecret, bucketSecret, schedule ],
   '10_object': import 'object.jsonnet',
 }
