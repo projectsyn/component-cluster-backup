@@ -6,7 +6,7 @@ local params = inv.parameters.cluster_backup;
 
 local schedule = import 'schedule.libsonnet';
 
-local namespaceName = params.etcd_backup_namespace;
+local namespaceName = '%s-etcd' % params.namespace;
 local privilegedNamespace = kube.Namespace(namespaceName) {
   metadata+: {
     annotations+: {
@@ -22,7 +22,7 @@ local serviceAccount = kube.ServiceAccount('etcd-backup') {
   },
 };
 
-local scc = kube._Object('security.openshift.io/v1', 'SecurityContextConstraints', params.etcd_backup_namespace) {
+local scc = kube._Object('security.openshift.io/v1', 'SecurityContextConstraints', namespaceName) {
   allowPrivilegedContainer: true,
   allowHostNetwork: true,
   allowHostDirVolumePlugin: true,
