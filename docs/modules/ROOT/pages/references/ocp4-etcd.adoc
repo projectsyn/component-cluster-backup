@@ -1,0 +1,12 @@
+= etcd Backup on Openshift 4
+
+etcd is the key-value store for OpenShift 4, which persists the state of all resource objects.
+
+The automated backup follows the https://docs.openshift.com/container-platform/4.8/backup_and_restore/backing-up-etcd.html[Backing up etcd] guide.
+
+== Files
+
+The backup tar contains two files:
+
+- `snapshot_<datetimestamp>.db`: This file is the etcd snapshot.
+- `static_kuberesources_<datetimestamp>.tar.gz`: This file contains the resources for the static pods. If etcd encryption is enabled, it also contains the encryption keys for the etcd snapshot.
