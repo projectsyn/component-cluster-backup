@@ -3,6 +3,9 @@ kind: Namespace
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: syn-cluster-backup
     name: syn-cluster-backup
   name: syn-cluster-backup
 ---
@@ -11,6 +14,9 @@ kind: ServiceAccount
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: object-backup
     name: object-backup
   name: object-backup
   namespace: syn-cluster-backup
@@ -20,6 +26,9 @@ kind: ClusterRole
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: cluster-backup-object-reader
     name: cluster-backup-object-reader
   name: cluster-backup-object-reader
 rules:
@@ -36,6 +45,9 @@ kind: ClusterRoleBinding
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: cluster-backup-object-reader
     name: cluster-backup-object-reader
   name: cluster-backup-object-reader
 roleRef:
@@ -115,6 +127,9 @@ kind: ConfigMap
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: object-dumper
     name: object-dumper
   name: object-dumper
   namespace: syn-cluster-backup
@@ -122,6 +137,10 @@ metadata:
 apiVersion: backup.appuio.ch/v1alpha1
 kind: PreBackupPod
 metadata:
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: object-dumper
   name: object-dumper
   namespace: syn-cluster-backup
 spec:
@@ -170,6 +189,9 @@ kind: Secret
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: objects-backup-password
     name: objects-backup-password
   name: objects-backup-password
   namespace: syn-cluster-backup
@@ -183,6 +205,9 @@ kind: Secret
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: objects-backup-s3-credentials
     name: objects-backup-s3-credentials
   name: objects-backup-s3-credentials
   namespace: syn-cluster-backup
@@ -194,6 +219,10 @@ type: Opaque
 apiVersion: backup.appuio.ch/v1alpha1
 kind: Schedule
 metadata:
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: objects
   name: objects
   namespace: syn-cluster-backup
 spec:

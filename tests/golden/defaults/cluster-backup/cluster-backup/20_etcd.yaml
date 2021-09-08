@@ -4,6 +4,9 @@ metadata:
   annotations:
     openshift.io/node-selector: ''
   labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: syn-cluster-backup-etcd
     name: syn-cluster-backup-etcd
   name: syn-cluster-backup-etcd
 ---
@@ -12,6 +15,9 @@ kind: ServiceAccount
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: etcd-backup
     name: etcd-backup
   name: etcd-backup
   namespace: syn-cluster-backup-etcd
@@ -31,6 +37,9 @@ kind: SecurityContextConstraints
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: syn-cluster-backup-etcd
     name: syn-cluster-backup-etcd
   name: syn-cluster-backup-etcd
 readOnlyRootFilesystem: true
@@ -54,6 +63,10 @@ volumes:
 apiVersion: backup.appuio.ch/v1alpha1
 kind: PreBackupPod
 metadata:
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: etcd-backup
   name: etcd-backup
   namespace: syn-cluster-backup-etcd
 spec:
@@ -133,6 +146,9 @@ kind: Secret
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: etcd-backup-password
     name: etcd-backup-password
   name: etcd-backup-password
   namespace: syn-cluster-backup-etcd
@@ -146,6 +162,9 @@ kind: Secret
 metadata:
   annotations: {}
   labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: etcd-backup-s3-credentials
     name: etcd-backup-s3-credentials
   name: etcd-backup-s3-credentials
   namespace: syn-cluster-backup-etcd
@@ -157,6 +176,10 @@ type: Opaque
 apiVersion: backup.appuio.ch/v1alpha1
 kind: Schedule
 metadata:
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: etcd
   name: etcd
   namespace: syn-cluster-backup-etcd
 spec:
