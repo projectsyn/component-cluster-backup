@@ -92,16 +92,14 @@ local etcdBackup =
                 privileged: true,
                 runAsUser: 0,
               },
-              volumeMounts: [
-                {
+              volumeMounts_: {
+                host: {
                   mountPath: '/host',
-                  name: 'host',
                 },
-                {
+                backup: {
                   mountPath: '/host/mnt/backup',
-                  name: 'backup',
                 },
-              ],
+              },
             },
           ],
           containers: [ super.containers[0] {
