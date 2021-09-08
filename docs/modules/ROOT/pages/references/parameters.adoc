@@ -22,6 +22,14 @@ default:: `syn-cluster-backup`
 
 The namespace in which to deploy this component.
 
+== `etcd_backup_namespace`
+
+[horizontal]
+type:: string
+default:: `syn-cluster-backup-etcd`
+
+The namespace in which to deploy the etcd backup part of this component.
+
 == `bucket`
 
 [horizontal]

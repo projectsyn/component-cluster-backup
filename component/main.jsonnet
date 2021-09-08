@@ -5,6 +5,8 @@ local kube = import 'lib/kube.libjsonnet';
 local inv = kap.inventory();
 local params = inv.parameters.cluster_backup;
 
+local on_openshift = inv.parameters.facts.distribution == 'openshift4';
+
 local defaultLabels(name) = {
   metadata+: {
     labels+: {
@@ -21,5 +23,5 @@ local addDefaultLabels(objs) =
 // Define outputs below
 {
   '10_object': addDefaultLabels(import 'object.jsonnet'),
-  '20_etcd': addDefaultLabels(import 'etcd.jsonnet'),
+  [if on_openshift then '20_etcd']: addDefaultLabels(import 'etcd.jsonnet'),
 }
