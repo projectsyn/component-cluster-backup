@@ -23,5 +23,5 @@ local addDefaultLabels(objs) =
 // Define outputs below
 {
   '10_object': addDefaultLabels(import 'object.jsonnet'),
-  [if on_openshift then '20_etcd']: addDefaultLabels(import 'etcd.jsonnet'),
+  [if on_openshift then '20_ocp4_etcd']: addDefaultLabels(import 'ocp4-etcd.jsonnet'),
 }
