@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   annotations:
-    openshift.io/node-selector: ''
+    openshift.io/node-selector: node-role.kubernetes.io/master=
   labels:
     app.kubernetes.io/component: cluster-backup
     app.kubernetes.io/managed-by: commodore
@@ -120,12 +120,10 @@ spec:
           stdin: false
           tty: false
           volumeMounts:
-            - mountPath: /host
-              name: host
             - mountPath: /host/mnt/backup
               name: backup
-      nodeSelector:
-        node-role.kubernetes.io/master: ''
+            - mountPath: /host
+              name: host
       serviceAccountName: etcd-backup
       terminationGracePeriodSeconds: 30
       tolerations:
