@@ -70,7 +70,7 @@ metadata:
   name: etcd-backup
   namespace: syn-cluster-backup-etcd
 spec:
-  backupCommand: tar czf - /host/mnt/backup/*.{db,tar.gz}
+  backupCommand: tar czf - -C /host/mnt/backup/ .
   fileExtension: .tar.gz
   pod:
     spec:

@@ -63,7 +63,7 @@ local etcdBackup =
   local pod = backup.PreBackupPod(
     'etcd-backup',
     '%s/%s:%s' % [ image.registry, image.image, image.tag ],
-    'tar czf - /host/mnt/backup/*.{db,tar.gz}',
+    'tar czf - -C /host/mnt/backup/ .',
     fileext='.tar.gz'
   );
   pod {
