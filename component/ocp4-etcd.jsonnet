@@ -11,7 +11,7 @@ local privilegedNamespace = kube.Namespace(namespaceName) {
   metadata+: {
     annotations+: {
       // Jobs must be allowed on master nodes to backup etcd
-      'openshift.io/node-selector': 'node-role.kubernetes.io/master=',
+      'openshift.io/node-selector': '',
     },
   },
 };
@@ -134,6 +134,9 @@ local etcdBackup =
               name: 'backup',
             },
           ],
+          nodeSelector: {
+            'node-role.kubernetes.io/master': '',
+          },
           tolerations: [
             {
               key: 'node-role.kubernetes.io/master',
