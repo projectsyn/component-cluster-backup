@@ -5,11 +5,15 @@ local kube = import 'lib/kube.libjsonnet';
 local inv = kap.inventory();
 local params = inv.parameters.cluster_backup;
 
-local namespace = {
+local schedule = import 'schedule.libsonnet';
+
+local namespace = kube.Namespace(params.namespace);
+
+local namespaceMeta = {
   metadata+: { namespace: params.namespace },
 };
 
-local sa = kube.ServiceAccount('object-backup') + namespace;
+local sa = kube.ServiceAccount('object-backup') + namespaceMeta;
 
 local role = kube.ClusterRole('cluster-backup-object-reader') {
   rules: [
@@ -26,7 +30,7 @@ local binding = kube.ClusterRoleBinding('cluster-backup-object-reader') {
   roleRef_: role,
 };
 
-local objectDumperConfig = kube.ConfigMap('object-dumper') + namespace + {
+local objectDumperConfig = kube.ConfigMap('object-dumper') + namespaceMeta + {
   data: {
     'known-to-fail': std.join('\n', params.known_to_fail),
     'must-exist': std.join('\n', params.must_exist),
@@ -40,7 +44,7 @@ local objectDumper =
     '%s:%s' % [ image.image, image.tag ],
     '/usr/local/bin/dump-objects -sd /data',
     fileext='.tar.gz'
-  ) + namespace;
+  ) + namespaceMeta;
   pod {
     spec+: {
       pod+: {
@@ -92,9 +96,10 @@ local objectDumper =
   };
 
 [
+  namespace,
   sa,
   role,
   binding,
   objectDumperConfig,
   objectDumper,
-]
+] + schedule.Schedule('objects', params.namespace, '%d * * * *' % schedule.RandomMinute(params.namespace))

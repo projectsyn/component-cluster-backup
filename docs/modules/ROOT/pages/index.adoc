@@ -2,6 +2,8 @@
 
 Cluster Backup is a Commodore component to manage backups of a Kubernetes cluster.
 It builds on top of https://github.com/vshn/k8up[k8up].
-Backups are created for snappshots of etcd and for json dumps of individual objects.
+Backups are created for snapshots of etcd and for json dumps of individual objects.
+
+NOTE: Currently, etcd backups are only supported on OpenShift 4.
 
 See the xref:references/parameters.adoc[parameters] reference for further details.

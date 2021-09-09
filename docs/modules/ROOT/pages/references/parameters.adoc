@@ -75,8 +75,24 @@ image: docker.io/projectsyn/k8s-object-dumper
 tag: latest
 ----
 
-Object dumper is script that exports all retreivalbe objects from a Kubernetes API and dumps them as a Tar archive.
+Object dumper is script that exports all retrievable objects from a Kubernetes API and dumps them as a Tar archive.
 See https://github.com/projectsyn/k8s-object-dumper.
+
+=== `etcd_backup`
+
+[horizontal]
+type:: dictionary
+default::
++
+[source,yaml]
+----
+registry: docker.io
+image: debian
+tag: bullseye
+----
+
+The image used to backup etcd.
+Required binaries in the image are `chroot` and `tar`.
 
 === `keepjobs`
 

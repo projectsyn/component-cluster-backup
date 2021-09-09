@@ -1,0 +1,208 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/node-selector: node-role.kubernetes.io/master=
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: syn-cluster-backup-etcd
+    name: syn-cluster-backup-etcd
+  name: syn-cluster-backup-etcd
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: etcd-backup
+    name: etcd-backup
+  name: etcd-backup
+  namespace: syn-cluster-backup-etcd
+---
+allowHostDirVolumePlugin: true
+allowHostIPC: false
+allowHostNetwork: true
+allowHostPID: false
+allowHostPorts: false
+allowPrivilegedContainer: true
+allowedCapabilities: []
+apiVersion: security.openshift.io/v1
+defaultAddCapabilities: []
+fsGroup:
+  type: MustRunAs
+kind: SecurityContextConstraints
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: syn-cluster-backup-etcd
+    name: syn-cluster-backup-etcd
+  name: syn-cluster-backup-etcd
+readOnlyRootFilesystem: true
+requiredDropCapabilities: []
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: MustRunAs
+supplementalGroups:
+  type: RunAsAny
+users:
+  - system:serviceaccount:syn-cluster-backup-etcd:etcd-backup
+volumes:
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - hostPath
+  - projected
+  - secret
+---
+apiVersion: backup.appuio.ch/v1alpha1
+kind: PreBackupPod
+metadata:
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: etcd-backup
+  name: etcd-backup
+  namespace: syn-cluster-backup-etcd
+spec:
+  backupCommand: tar czf - /host/mnt/backup/*.{db,tar.gz}
+  fileExtension: .tar.gz
+  pod:
+    spec:
+      containers:
+        - args: []
+          command:
+            - tail
+            - -f
+            - /dev/null
+          env: []
+          image: docker.io/debian:bullseye
+          imagePullPolicy: IfNotPresent
+          name: etcd-backup
+          ports: []
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          stdin: false
+          tty: false
+          volumeMounts:
+            - mountPath: /host
+              name: host
+            - mountPath: /host/mnt/backup
+              name: backup
+      hostNetwork: true
+      imagePullSecrets: []
+      initContainers:
+        - args:
+            - /usr/local/bin/cluster-backup.sh
+            - /mnt/backup
+          command:
+            - chroot
+            - /host
+          env: []
+          image: docker.io/debian:bullseye
+          imagePullPolicy: IfNotPresent
+          name: dump-database
+          ports: []
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          stdin: false
+          tty: false
+          volumeMounts:
+            - mountPath: /host/mnt/backup
+              name: backup
+            - mountPath: /host
+              name: host
+      serviceAccountName: etcd-backup
+      terminationGracePeriodSeconds: 30
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: Exists
+      volumes:
+        - hostPath:
+            path: /
+            type: Directory
+          name: host
+        - emptyDir: {}
+          name: backup
+---
+apiVersion: v1
+data: {}
+kind: Secret
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: etcd-backup-password
+    name: etcd-backup-password
+  name: etcd-backup-password
+  namespace: syn-cluster-backup-etcd
+stringData:
+  password: t-silent-test-1234/c-green-test-1234/cluster-backup/password
+type: Opaque
+---
+apiVersion: v1
+data: {}
+kind: Secret
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: etcd-backup-s3-credentials
+    name: etcd-backup-s3-credentials
+  name: etcd-backup-s3-credentials
+  namespace: syn-cluster-backup-etcd
+stringData:
+  password: t-silent-test-1234/c-green-test-1234/cluster-backup/s3_secret_key
+  username: t-silent-test-1234/c-green-test-1234/cluster-backup/s3_access_key
+type: Opaque
+---
+apiVersion: backup.appuio.ch/v1alpha1
+kind: Schedule
+metadata:
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: etcd
+  name: etcd
+  namespace: syn-cluster-backup-etcd
+spec:
+  backend:
+    repoPasswordSecretRef:
+      key: password
+      name: etcd-backup-password
+    s3:
+      accessKeyIDSecretRef:
+        key: username
+        name: etcd-backup-s3-credentials
+      bucket: c-green-test-1234-cluster-backup
+      endpoint: null
+      secretAccessKeySecretRef:
+        key: password
+        name: etcd-backup-s3-credentials
+  backup:
+    keepJobs: 5
+    promURL: null
+    schedule: 13 3 * * *
+  check:
+    promURL: null
+    schedule: 30 3 * * *
+  prune:
+    retention:
+      keepDaily: 30
+      keepLast: 20
+    schedule: 10 */4 * * *

@@ -1,0 +1,13 @@
+= etcd Backup on Openshift 4
+
+etcd is the key-value store used by Kubernetes.
+etcd contains the state of all resources created in the cluster through the Kubernetes API.
+
+The automated backup implements the steps documented in the https://docs.openshift.com/container-platform/4.8/backup_and_restore/backing-up-etcd.html[Backing up etcd] guide.
+
+== Files
+
+The backup consist of a `.tar.gz` archive which contains two files:
+
+- `snapshot_<datetimestamp>.db`: This file is the etcd snapshot.
+- `static_kuberesources_<datetimestamp>.tar.gz`: This file contains the resources for the static pods. If etcd encryption is enabled, it also contains the encryption keys for the etcd snapshot.

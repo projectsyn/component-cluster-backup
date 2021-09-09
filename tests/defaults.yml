@@ -1,4 +1,7 @@
 parameters:
+  facts:
+    distribution: openshift4
+
   kapitan:
     dependencies:
       - type: https
