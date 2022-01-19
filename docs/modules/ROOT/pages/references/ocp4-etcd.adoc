@@ -3,7 +3,7 @@
 etcd is the key-value store used by Kubernetes.
 etcd contains the state of all resources created in the cluster through the Kubernetes API.
 
-The automated backup implements the steps documented in the https://docs.openshift.com/container-platform/4.8/backup_and_restore/backing-up-etcd.html[Backing up etcd] guide.
+The automated backup implements the steps documented in the https://docs.openshift.com/container-platform/4.9/backup_and_restore/control_plane_backup_and_restore/backing-up-etcd.html[Backing up etcd] guide.
 
 == Files
 
