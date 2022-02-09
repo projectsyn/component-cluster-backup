@@ -1,4 +1,4 @@
-= etcd Backup on Openshift 4
+= etcd Backup on OpenShift 4
 
 etcd is the key-value store used by Kubernetes.
 etcd contains the state of all resources created in the cluster through the Kubernetes API.
