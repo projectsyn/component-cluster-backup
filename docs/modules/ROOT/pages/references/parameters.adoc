@@ -34,7 +34,7 @@ This bucket will be used to store the backups.
 
 [horizontal]
 type:: string
-default:: `'?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/s3_access_key}'`
+default:: `'?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/s3_access_key}'`
 
 The access key needed to access the storage bucket.
 The default is a reference to a secret within Vault.
@@ -51,7 +51,7 @@ The name of the storage bucket.
 
 [horizontal]
 type:: string
-default:: `?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/s3_secret_key}`
+default:: `?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/s3_secret_key}`
 
 The secret key needed to access the storage bucket.
 The default is a reference to a secret within Vault.
@@ -106,7 +106,7 @@ Number of backup jobs to keep.
 
 [horizontal]
 type:: string
-default:: `?{vaultkv:${customer:name}/${cluster:name}/cluster-backup/password}'`
+default:: `?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/password}'`
 
 Password used to encrypt the backup.
 The default is a reference to a secret within Vault.
