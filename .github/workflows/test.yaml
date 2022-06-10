@@ -5,7 +5,7 @@ on:
       - master
 
 env:
-  COMPONENT_NAME: cluster-backup
+  COMPONENT_NAME: Cluster Backup
 
 jobs:
   linting:
