@@ -61,68 +61,40 @@ subjects:
 ---
 apiVersion: v1
 data:
-  known-to-fail: '.+mutators
-
+  known-to-fail: |-
+    .+mutators
     .+reviews
-
     .+validators
-
     bindings
-
     deploymentconfigrollbacks
-
     imagesignatures
-
     imagestreamimages
-
     imagestreamimports
-
     imagestreammappings
-
     mutations
-
     projectrequests
-
     useridentitymappings
-
-    validations'
-  must-exist: 'configmaps
-
+    validations
+  must-exist: |-
+    configmaps
     daemonsets
-
     deployments
-
     endpoints
-
     horizontalpodautoscalers
-
     ingresses
-
     jobs
-
     limitranges
-
     namespaces
-
     nodes
-
     persistentvolumeclaims
-
     persistentvolumes
-
     replicasets
-
     resourcequotas
-
     roles
-
     secrets
-
     serviceaccounts
-
     services
-
-    statefulsets'
+    statefulsets
 kind: ConfigMap
 metadata:
   annotations: {}
