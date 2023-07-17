@@ -9,7 +9,7 @@ local params = inv.parameters.cluster_backup;
 local minute(namespace) =
   std.foldl(function(x, y) x + y, std.encodeUTF8(std.md5(inv.parameters.cluster.name + namespace)), 0) % 60;
 
-local buildSchedule(name, namespace, backupSchedule) =
+local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *') =
   local backupSecret = kube.Secret('%s-backup-password' % name) {
     metadata+: {
       namespace: namespace,
@@ -49,7 +49,7 @@ local buildSchedule(name, namespace, backupSchedule) =
     backupkey=backupSecretRef,
     s3secret=bucketSecretRef,
     create_bucket=false,
-  ).schedule + backup.PruneSpec('10 */4 * * *', 30, 20) {
+  ).schedule + backup.PruneSpec(pruneSchedule, 30, 20) {
     metadata+: {
       namespace: namespace,
     },
