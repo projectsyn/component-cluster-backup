@@ -207,4 +207,4 @@ spec:
     retention:
       keepDaily: 30
       keepLast: 20
-    schedule: 10 */4 * * *
+    schedule: 20 */4 * * *

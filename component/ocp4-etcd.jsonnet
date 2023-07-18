@@ -154,4 +154,9 @@ local etcdBackup =
   serviceAccount,
   scc,
   etcdBackup,
-] + schedule.Schedule('etcd', namespaceName, '%d 3 * * *' % schedule.RandomMinute(namespaceName))
+] + schedule.Schedule(
+  'etcd',
+  namespaceName,
+  '%d 3 * * *' % schedule.RandomMinute(namespaceName),
+  '20 */4 * * *'
+)
