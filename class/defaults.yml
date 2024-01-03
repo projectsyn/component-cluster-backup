@@ -22,6 +22,7 @@ parameters:
       - 'imagestreamimports'
       - 'imagestreammappings'
       - 'mutations'
+      - 'podsecuritypolicysubjectreviews'
       - 'projectrequests'
       - 'useridentitymappings'
       - 'validations'
