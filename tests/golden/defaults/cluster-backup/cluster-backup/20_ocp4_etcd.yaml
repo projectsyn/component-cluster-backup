@@ -60,7 +60,7 @@ volumes:
   - projected
   - secret
 ---
-apiVersion: backup.appuio.ch/v1alpha1
+apiVersion: k8up.io/v1
 kind: PreBackupPod
 metadata:
   labels:
@@ -173,7 +173,7 @@ stringData:
   username: t-silent-test-1234/c-green-test-1234/cluster-backup/s3_access_key
 type: Opaque
 ---
-apiVersion: backup.appuio.ch/v1alpha1
+apiVersion: k8up.io/v1
 kind: Schedule
 metadata:
   labels:
@@ -198,10 +198,8 @@ spec:
         name: etcd-backup-s3-credentials
   backup:
     keepJobs: 5
-    promURL: null
     schedule: 13 3 * * *
   check:
-    promURL: null
     schedule: 30 3 * * *
   prune:
     retention:
