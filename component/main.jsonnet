@@ -5,7 +5,7 @@ local kube = import 'lib/kube.libjsonnet';
 local inv = kap.inventory();
 local params = inv.parameters.cluster_backup;
 
-local on_openshift = inv.parameters.facts.distribution == 'openshift4';
+local on_openshift = std.member([ 'openshift4', 'oke' ], inv.parameters.facts.distribution);
 
 local defaultLabels(name) = {
   metadata+: {
