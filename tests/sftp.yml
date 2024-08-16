@@ -1,0 +1,14 @@
+parameters:
+  kapitan:
+    dependencies:
+      - type: https
+        source: https://raw.githubusercontent.com/projectsyn/component-backup-k8up/v5.3.0/lib/backup-k8up.libjsonnet
+        output_path: vendor/lib/backup-k8up.libjsonnet
+
+  backup_k8up:
+    global_backup_config:
+      s3_endpoint: null
+    prometheus_push_gateway: null
+
+  cluster-backup:
+    mode: sftp
