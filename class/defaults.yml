@@ -7,10 +7,22 @@ parameters:
     namespace: syn-cluster-backup
     keepjobs: 5
     password: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/password}'
+    # supported options, currently s3 and sftp
+    backend_type: s3
     bucket:
       name: '${cluster:name}-cluster-backup'
       accesskey: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/s3_access_key}'
       secretkey: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/s3_secret_key}'
+    sftp:
+      host: sftp.example.com
+      port: 22
+      user: exampleuser
+      path: cluster-backup
+      extra_ssh_config: ''
+      # By default, we expect that the private key is multi-line
+      ssh_private_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/ssh_private_key}'
+      ssh_public_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/ssh_public_key}'
+      ssh_known_hosts: ''
     known_to_fail:
       - '.+mutators'
       - '.+reviews'

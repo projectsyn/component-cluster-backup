@@ -55,7 +55,101 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
     },
   };
 
-  [ backupSecret, bucketSecret, schedule ];
+  // from here: additional config and overrides that are necessary to backup
+  // to SFTP instead of S3. These are only used if `params.backup_type=sftp`.
+  local sftpRepository = kube.ConfigMap('%s-backup-repository' % name) {
+    metadata+: {
+      namespace: namespace,
+    },
+    data: {
+      RESTIC_REPOSITORY: 'sftp:%(host)s:%(path)s' % params.sftp,
+    },
+  };
+
+  local sftpConfig = kube.Secret('%s-backup-sftp-config' % name) {
+    metadata+: {
+      namespace: namespace,
+    },
+    data:: {},
+    stringData: {
+      // ssh expects trailing newlines for private keys, for consistency we
+      // add a trailing newline for the public key and known hosts as well.
+      ssh_key: '%(ssh_private_key)s\n' % params.sftp,
+      'ssh_key.pub': '%(ssh_public_key)s\n' % params.sftp,
+      known_hosts: '%(ssh_known_hosts)s\n' % params.sftp,
+      config: |||
+        Host %(host)s
+        User %(user)s
+        Port %(port)s
+        IdentityFile ~/.ssh/ssh_key
+        %(extra_ssh_config)s
+      ||| % params.sftp,
+    },
+  };
+
+  local sftpPodConfig = kube._Object('k8up.io/v1', 'PodConfig', name) {
+    metadata+: {
+      namespace: namespace,
+    },
+    spec: {
+      template: {
+        spec: {
+          containers: [
+            {
+              // name is mandatory
+              name: 'backup',
+              env: [
+                {
+                  name: 'HOME',
+                  value: '/home/k8up',
+                },
+              ],
+              volumeMounts: [
+                {
+                  name: 'ssh-config',
+                  mountPath: '/home/k8up/.ssh',
+                },
+              ],
+            },
+          ],
+          volumes: [
+            {
+              name: 'ssh-config',
+              secret: {
+                defaultMode: 256,  // 0400
+                secretName: sftpConfig.metadata.name,
+              },
+            },
+          ],
+        },
+      },
+    },
+  };
+
+  local sftpSchedule = schedule {
+    spec+: {
+      podConfigRef: {
+        name: sftpPodConfig.metadata.name,
+      },
+      backend+: {
+        // drop S3 config
+        s3:: {},
+        envFrom: [ {
+          configMapRef: {
+            name: sftpRepository.metadata.name,
+          },
+        } ],
+      },
+    },
+  };
+
+
+  if params.backend_type == 's3' then
+    [ backupSecret, bucketSecret, schedule ]
+  else if params.backend_type == 'sftp' then
+    [ backupSecret, sftpRepository, sftpConfig, sftpPodConfig, sftpSchedule ]
+  else
+    error "Backup backend type '%s' not supported by the component" % params.backend_type;
 
 {
   Schedule: buildSchedule,

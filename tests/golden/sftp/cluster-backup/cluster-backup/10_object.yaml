@@ -172,21 +172,73 @@ stringData:
 type: Opaque
 ---
 apiVersion: v1
-data: {}
+data:
+  RESTIC_REPOSITORY: sftp:sftp.example.com:cluster-backup
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: objects-backup-repository
+    name: objects-backup-repository
+  name: objects-backup-repository
+  namespace: syn-cluster-backup
+---
+apiVersion: v1
 kind: Secret
 metadata:
   annotations: {}
   labels:
     app.kubernetes.io/component: cluster-backup
     app.kubernetes.io/managed-by: commodore
-    app.kubernetes.io/name: objects-backup-s3-credentials
-    name: objects-backup-s3-credentials
-  name: objects-backup-s3-credentials
+    app.kubernetes.io/name: objects-backup-sftp-config
+    name: objects-backup-sftp-config
+  name: objects-backup-sftp-config
   namespace: syn-cluster-backup
 stringData:
-  password: t-silent-test-1234/c-green-test-1234/cluster-backup/s3_secret_key
-  username: t-silent-test-1234/c-green-test-1234/cluster-backup/s3_access_key
+  config: |+
+    Host sftp.example.com
+    User exampleuser
+    Port 22
+    IdentityFile ~/.ssh/ssh_key
+
+  known_hosts: |+
+    sftp.example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPSszUbK2KmbjXKSWCajPlTCR8GBCElkd2I1ciBari3k
+
+  ssh_key: |
+    t-silent-test-1234/c-green-test-1234/cluster-backup/ssh_private_key
+  ssh_key.pub: |
+    t-silent-test-1234/c-green-test-1234/cluster-backup/ssh_public_key
 type: Opaque
+---
+apiVersion: k8up.io/v1
+kind: PodConfig
+metadata:
+  annotations: {}
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: objects
+    name: objects
+  name: objects
+  namespace: syn-cluster-backup
+spec:
+  template:
+    spec:
+      containers:
+        - env:
+            - name: HOME
+              value: /home/k8up
+          name: backup
+          volumeMounts:
+            - mountPath: /home/k8up/.ssh
+              name: ssh-config
+      volumes:
+        - name: ssh-config
+          secret:
+            defaultMode: 256
+            secretName: objects-backup-sftp-config
 ---
 apiVersion: k8up.io/v1
 kind: Schedule
@@ -199,23 +251,19 @@ metadata:
   namespace: syn-cluster-backup
 spec:
   backend:
+    envFrom:
+      - configMapRef:
+          name: objects-backup-repository
     repoPasswordSecretRef:
       key: password
       name: objects-backup-password
-    s3:
-      accessKeyIDSecretRef:
-        key: username
-        name: objects-backup-s3-credentials
-      bucket: c-green-test-1234-cluster-backup
-      endpoint: null
-      secretAccessKeySecretRef:
-        key: password
-        name: objects-backup-s3-credentials
   backup:
     keepJobs: 5
     schedule: 25 * * * *
   check:
     schedule: 30 3 * * *
+  podConfigRef:
+    name: objects
   prune:
     retention:
       keepDaily: 30
