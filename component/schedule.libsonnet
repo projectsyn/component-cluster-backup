@@ -108,16 +108,6 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
                   value: '/home/k8up/.job/repository',
                 },
               ],
-              volumeMounts: [
-                {
-                  name: 'ssh-config',
-                  mountPath: '/home/k8up/.ssh',
-                },
-                {
-                  name: 'restic-repository',
-                  mountPath: '/home/k8up/.job',
-                },
-              ],
             },
           ],
           volumes: [
@@ -148,6 +138,16 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
       backend+: {
         // drop S3 config
         s3:: {},
+        volumeMounts: [
+          {
+            name: 'ssh-config',
+            mountPath: '/home/k8up/.ssh',
+          },
+          {
+            name: 'restic-repository',
+            mountPath: '/home/k8up/.job',
+          },
+        ],
       },
     },
   };

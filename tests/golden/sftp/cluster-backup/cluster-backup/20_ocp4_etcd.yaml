@@ -218,11 +218,6 @@ spec:
             - name: RESTIC_REPOSITORY_FILE
               value: /home/k8up/.job/repository
           name: backup
-          volumeMounts:
-            - mountPath: /home/k8up/.ssh
-              name: ssh-config
-            - mountPath: /home/k8up/.job
-              name: restic-repository
       volumes:
         - name: ssh-config
           secret:
@@ -246,6 +241,11 @@ spec:
     repoPasswordSecretRef:
       key: password
       name: etcd-backup-password
+    volumeMounts:
+      - mountPath: /home/k8up/.ssh
+        name: ssh-config
+      - mountPath: /home/k8up/.job
+        name: restic-repository
   backup:
     keepJobs: 5
     schedule: 13 3 * * *
