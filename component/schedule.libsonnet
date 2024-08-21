@@ -108,10 +108,8 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
                   value: '/home/k8up/.job/repository',
                 },
                 {
-                  name: 'RESTIC_PASSWORD',
-                  valueFrom: {
-                    secretKeyRef: backupSecretRef,
-                  },
+                  name: 'RESTIC_PASSWORD_FILE',
+                  value: '/home/k8up/.secret/password',
                 },
               ],
             },
@@ -130,6 +128,12 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
                 name: sftpRepository.metadata.name,
               },
             },
+            {
+              name: 'backup-secret',
+              secret: {
+                secretName: backupSecret.metadata.name,
+              },
+            },
           ],
         },
       },
@@ -144,13 +148,6 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
       backend+: {
         // drop S3 config
         s3:: {},
-        envFrom: [
-          {
-            secretRef: {
-              name: backupSecret.metadata.name,
-            },
-          },
-        ],
         volumeMounts: [
           {
             name: 'ssh-config',
@@ -159,6 +156,10 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
           {
             name: 'restic-repository',
             mountPath: '/home/k8up/.job',
+          },
+          {
+            name: 'backup-secret',
+            mountPath: '/home/k8up/.secret',
           },
         ],
       },

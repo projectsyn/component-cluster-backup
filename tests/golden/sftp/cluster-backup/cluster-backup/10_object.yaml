@@ -232,11 +232,8 @@ spec:
               value: /home/k8up
             - name: RESTIC_REPOSITORY_FILE
               value: /home/k8up/.job/repository
-            - name: RESTIC_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  key: password
-                  name: objects-backup-password
+            - name: RESTIC_PASSWORD_FILE
+              value: /home/k8up/.secret/password
           name: backup
       volumes:
         - name: ssh-config
@@ -246,6 +243,9 @@ spec:
         - configMap:
             name: objects-backup-repository
           name: restic-repository
+        - name: backup-secret
+          secret:
+            secretName: objects-backup-password
 ---
 apiVersion: k8up.io/v1
 kind: Schedule
@@ -258,9 +258,6 @@ metadata:
   namespace: syn-cluster-backup
 spec:
   backend:
-    envFrom:
-      - secretRef:
-          name: objects-backup-password
     repoPasswordSecretRef:
       key: password
       name: objects-backup-password
@@ -269,6 +266,8 @@ spec:
         name: ssh-config
       - mountPath: /home/k8up/.job
         name: restic-repository
+      - mountPath: /home/k8up/.secret
+        name: backup-secret
   backup:
     keepJobs: 5
     schedule: 25 * * * *
