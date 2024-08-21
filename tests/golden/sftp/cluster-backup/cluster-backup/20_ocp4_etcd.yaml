@@ -158,7 +158,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  RESTIC_REPOSITORY: sftp:sftp.example.com:cluster-backup
+  RESTIC_REPOSITORY_FILE: sftp:sftp.example.com:cluster-backup
 kind: ConfigMap
 metadata:
   annotations: {}

@@ -62,7 +62,7 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
       namespace: namespace,
     },
     data: {
-      RESTIC_REPOSITORY: 'sftp:%(host)s:%(path)s' % params.sftp,
+      RESTIC_REPOSITORY_FILE: 'sftp:%(host)s:%(path)s' % params.sftp,
     },
   };
 
