@@ -158,7 +158,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  RESTIC_REPOSITORY_FILE: sftp:sftp.example.com:cluster-backup
+  repository: sftp:sftp.example.com:cluster-backup
 kind: ConfigMap
 metadata:
   annotations: {}
@@ -215,15 +215,22 @@ spec:
         - env:
             - name: HOME
               value: /home/k8up
+            - name: RESTIC_REPOSITORY_FILE
+              value: /home/k8up/.job/repository
           name: backup
           volumeMounts:
             - mountPath: /home/k8up/.ssh
               name: ssh-config
+            - mountPath: /home/k8up/.job
+              name: restic-repository
       volumes:
         - name: ssh-config
           secret:
             defaultMode: 256
             secretName: etcd-backup-sftp-config
+        - configMap:
+            name: etcd-backup-repository
+          name: restic-repository
 ---
 apiVersion: k8up.io/v1
 kind: Schedule
@@ -236,9 +243,6 @@ metadata:
   namespace: syn-cluster-backup-etcd
 spec:
   backend:
-    envFrom:
-      - configMapRef:
-          name: etcd-backup-repository
     repoPasswordSecretRef:
       key: password
       name: etcd-backup-password

@@ -62,7 +62,7 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
       namespace: namespace,
     },
     data: {
-      RESTIC_REPOSITORY_FILE: 'sftp:%(host)s:%(path)s' % params.sftp,
+      repository: 'sftp:%(host)s:%(path)s' % params.sftp,
     },
   };
 
@@ -103,11 +103,19 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
                   name: 'HOME',
                   value: '/home/k8up',
                 },
+                {
+                  name: 'RESTIC_REPOSITORY_FILE',
+                  value: '/home/k8up/.job/repository',
+                },
               ],
               volumeMounts: [
                 {
                   name: 'ssh-config',
                   mountPath: '/home/k8up/.ssh',
+                },
+                {
+                  name: 'restic-repository',
+                  mountPath: '/home/k8up/.job',
                 },
               ],
             },
@@ -118,6 +126,12 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
               secret: {
                 defaultMode: 256,  // 0400
                 secretName: sftpConfig.metadata.name,
+              },
+            },
+            {
+              name: 'restic-repository',
+              configMap: {
+                name: sftpRepository.metadata.name,
               },
             },
           ],
@@ -134,11 +148,6 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
       backend+: {
         // drop S3 config
         s3:: {},
-        envFrom: [ {
-          configMapRef: {
-            name: sftpRepository.metadata.name,
-          },
-        } ],
       },
     },
   };
