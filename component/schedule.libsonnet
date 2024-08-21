@@ -107,6 +107,12 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
                   name: 'RESTIC_REPOSITORY_FILE',
                   value: '/home/k8up/.job/repository',
                 },
+                {
+                  name: 'RESTIC_PASSWORD',
+                  valueFrom: {
+                    secretKeyRef: backupSecretRef,
+                  },
+                },
               ],
             },
           ],
@@ -138,6 +144,13 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
       backend+: {
         // drop S3 config
         s3:: {},
+        envFrom: [
+          {
+            secretRef: {
+              name: backupSecret.metadata.name,
+            },
+          },
+        ],
         volumeMounts: [
           {
             name: 'ssh-config',

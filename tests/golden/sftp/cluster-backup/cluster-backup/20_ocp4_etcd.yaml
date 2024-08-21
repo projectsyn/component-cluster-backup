@@ -217,6 +217,11 @@ spec:
               value: /home/k8up
             - name: RESTIC_REPOSITORY_FILE
               value: /home/k8up/.job/repository
+            - name: RESTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: etcd-backup-password
           name: backup
       volumes:
         - name: ssh-config
@@ -238,6 +243,9 @@ metadata:
   namespace: syn-cluster-backup-etcd
 spec:
   backend:
+    envFrom:
+      - secretRef:
+          name: etcd-backup-password
     repoPasswordSecretRef:
       key: password
       name: etcd-backup-password

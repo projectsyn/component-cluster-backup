@@ -232,6 +232,11 @@ spec:
               value: /home/k8up
             - name: RESTIC_REPOSITORY_FILE
               value: /home/k8up/.job/repository
+            - name: RESTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: objects-backup-password
           name: backup
       volumes:
         - name: ssh-config
@@ -253,6 +258,9 @@ metadata:
   namespace: syn-cluster-backup
 spec:
   backend:
+    envFrom:
+      - secretRef:
+          name: objects-backup-password
     repoPasswordSecretRef:
       key: password
       name: objects-backup-password
