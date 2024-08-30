@@ -1,17 +1,17 @@
 {
   "template": "https://github.com/projectsyn/commodore-component-template.git",
-  "commit": "8840f87d25d97ce0d4bfed75d40173caaf4100fc",
+  "commit": "95d2dbb90105a97114f46c9192b7ae146cbfaec0",
   "checkout": "main",
   "context": {
     "cookiecutter": {
       "name": "Cluster Backup",
       "slug": "cluster-backup",
       "parameter_key": "cluster_backup",
-      "test_cases": "defaults",
+      "test_cases": "defaults sftp",
       "add_lib": "n",
       "add_pp": "n",
       "add_golden": "y",
-      "add_matrix": "n",
+      "add_matrix": "y",
       "add_go_unit": "n",
       "automerge_patch": "y",
       "automerge_patch_v0": "n",

@@ -22,6 +22,16 @@ default:: `syn-cluster-backup`
 
 The namespace in which to deploy this component.
 
+== `backend_type`
+
+[horizontal]
+type:: string
+default:: `s3`
+values:: `s3`, `sftp`
+
+Which backend type to configure for the backup.
+Currently, the component supports backing up to S3 (compatible) buckets and SFTP.
+
 == `bucket`
 
 [horizontal]
@@ -29,6 +39,8 @@ type:: dictionary
 
 Holds the name and credentials for an S3 type storage bucket.
 This bucket will be used to store the backups.
+
+TIP: The bucket configuration is ignored (but must be present) when `backend_type` isn't set to `s3`.
 
 === `accesskey`
 
@@ -51,10 +63,104 @@ The name of the storage bucket.
 
 [horizontal]
 type:: string
-default:: `?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/s3_secret_key}`
+default:: `'?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/s3_secret_key}'`
 
 The secret key needed to access the storage bucket.
 The default is a reference to a secret within Vault.
+
+== `sftp`
+
+[horizontal]
+type:: dictionary
+
+This section holds SFTP connection details.
+When `backend_type` is set to `sftp`, the SFTP connection will be used to store the backups.
+
+TIP: The SFTP configuration is ignored when `backend_type` isn't set to `sftp`.
+
+=== `host`
+
+[horizontal]
+type:: string
+default:: `sftp.example.com`
+
+The host name of the SFTP server.
+Must resolve on the cluster.
+
+== `port`
+
+[horizontal]
+type:: number
+default:: `22`
+
+The port on which the SFTP server listens for incoming SSH connections.
+
+== `user`
+
+[horizontal]
+type:: string
+default:: `exampleuser`
+
+The user name to use when connecting to the SFTP server.
+
+== `path`
+
+[horizontal]
+type:: string
+default:: `cluster-backup`
+
+The path on the SFTP server where the backups should be stored.
+Relative paths are interpreted relative to the SSH user's home directory on the server.
+
+== `extra_ssh_config`
+
+[horizontal]
+type:: string
+default:: `''`
+
+Any additional contents for the backup job's `~/.ssh/config` file.
+The value must be a valid snippet of SSH config.
+
+The contents are appended to a file which contains a basic config that's constructed from parameters `sftp.host`, `sftp.port` and `sftp.user`.
+
+.Default `~/.ssh/config`
+[source]
+----
+Host <sftp.host>
+Port <sftp.port>
+User <sftp.user>
+IdentityFile ~/.ssh/ssh_key
+
+----
+
+The SSH config file is mounted to the backup job pod via K8up's `PodConfig` mechanism as `/home/k8up/.ssh`.
+Additionally, the `PodConfig` sets environment variable `HOME` to `/home/k8up`.
+
+=== `ssh_private_key`
+
+[horizontal]
+type:: string
+default:: `'?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/ssh_private_key}'`
+
+The private key to use to authenticate on the SFTP server.
+To ensure that the SSH key will be handled correctly, the component will always append a trailing new line to the provided value.
+
+=== `ssh_public_key`
+
+[horizontal]
+type:: string
+default:: `'?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/ssh_public_key}'`
+
+The public key associated with the private key provided in `ssh_private_key`.
+Currently not used, but deployed into the cluster for completeness.
+
+=== `ssh_known_hosts`
+
+[horizontal]
+type:: string
+default:: `''`
+
+The provided value is used verbatim as the contents for the backup job's `~/.ssh/known_hosts`.
 
 == `images`
 
@@ -106,7 +212,7 @@ Number of backup jobs to keep.
 
 [horizontal]
 type:: string
-default:: `?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/password}'`
+default:: `'?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/password}'`
 
 Password used to encrypt the backup.
 The default is a reference to a secret within Vault.
