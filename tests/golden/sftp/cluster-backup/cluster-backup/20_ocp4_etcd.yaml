@@ -158,7 +158,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  repository: sftp:sftp.example.com:cluster-backup
+  repository: sftp:sftp.example.com:cluster-backup/etcd
 kind: ConfigMap
 metadata:
   annotations: {}

@@ -173,7 +173,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  repository: sftp:sftp.example.com:cluster-backup
+  repository: sftp:sftp.example.com:cluster-backup/objects
 kind: ConfigMap
 metadata:
   annotations: {}

@@ -62,7 +62,7 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
       namespace: namespace,
     },
     data: {
-      repository: 'sftp:%(host)s:%(path)s' % params.sftp,
+      repository: 'sftp:%(host)s:%(path)s/%(_name)s' % params.sftp { _name: name },
     },
   };
 
