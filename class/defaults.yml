@@ -23,7 +23,9 @@ parameters:
       ssh_private_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/ssh_private_key}'
       ssh_public_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/ssh_public_key}'
       ssh_known_hosts: ''
-    ignored: []
+    ignored:
+      # OpenShift fucked up and shows the list api as enabled in the API-Discovery
+      - projectrequests.project.openshift.io
     must_exist: []
     images:
       object_dumper:

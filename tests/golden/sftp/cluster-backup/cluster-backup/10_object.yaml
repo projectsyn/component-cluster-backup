@@ -91,7 +91,7 @@ metadata:
   name: object-dumper
   namespace: syn-cluster-backup
 spec:
-  backupCommand: '/scripts/dump.sh '
+  backupCommand: /scripts/dump.sh -ignore=projectrequests.project.openshift.io
   fileExtension: .tar
   pod:
     spec:

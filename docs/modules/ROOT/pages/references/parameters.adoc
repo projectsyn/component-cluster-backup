@@ -222,13 +222,20 @@ The default is a reference to a secret within Vault.
 
 [horizontal]
 type:: list
-default:: `[]`
+default::
++
+[source,yaml]
+----
+ignored:
+  # OpenShift fucked up and shows the list api as enabled in the API-Discovery
+  - projectrequests.project.openshift.io
+----
 
 Resource types which will not be backed up.
 
 [NOTE]
 ====
-It is no longer necessary to ignore resources with no `list` verb.
+It is usually no longer necessary to ignore resources with no `list` verb.
 The discovery automatically filters them out.
 ====
 
