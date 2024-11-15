@@ -23,44 +23,32 @@ parameters:
       ssh_private_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/ssh_private_key}'
       ssh_public_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/ssh_public_key}'
       ssh_known_hosts: ''
-    known_to_fail:
-      - '.+mutators'
-      - '.+reviews'
-      - '.+validators'
-      - 'bindings'
-      - 'deploymentconfigrollbacks'
-      - 'imagesignatures'
-      - 'imagestreamimages'
-      - 'imagestreamimports'
-      - 'imagestreammappings'
-      - 'mutations'
-      - 'projectrequests'
-      - 'useridentitymappings'
-      - 'validations'
+    ignored: []
     must_exist:
       - 'configmaps'
-      - 'daemonsets'
-      - 'deployments'
+      - 'daemonsets.apps'
+      - 'deployments.apps'
       - 'endpoints'
-      - 'horizontalpodautoscalers'
-      - 'ingresses'
-      - 'jobs'
+      - 'horizontalpodautoscalers.autoscaling'
+      - 'ingresses.networking.k8s.io'
+      - 'jobs.batch'
       - 'limitranges'
       - 'namespaces'
       - 'nodes'
       - 'persistentvolumeclaims'
       - 'persistentvolumes'
-      - 'replicasets'
+      - 'replicasets.apps'
       - 'resourcequotas'
-      - 'roles'
+      - 'roles.rbac.authorization.k8s.io'
       - 'secrets'
       - 'serviceaccounts'
       - 'services'
-      - 'statefulsets'
+      - 'statefulsets.apps'
     images:
       object_dumper:
-        image: docker.io/projectsyn/k8s-object-dumper
-        tag: v0.2.3
+        registry: ghcr.io
+        image: projectsyn/k8s-object-dumper
+        tag: v0.3.0
       etcd_backup:
         registry: docker.io
         image: debian

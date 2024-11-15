@@ -30,10 +30,9 @@ local binding = kube.ClusterRoleBinding('cluster-backup-object-reader') {
   roleRef_: role,
 };
 
-local objectDumperConfig = kube.ConfigMap('object-dumper') + namespaceMeta + {
+local objectDumperConfig = kube.ConfigMap('object-dumper-script') + namespaceMeta + {
   data: {
-    'known-to-fail': std.join('\n', params.known_to_fail),
-    'must-exist': std.join('\n', params.must_exist),
+    'dump.sh': importstr './scripts/dump.sh',
   },
 };
 
@@ -41,9 +40,9 @@ local objectDumper =
   local image = params.images.object_dumper;
   local pod = backup.PreBackupPod(
     'object-dumper',
-    '%s:%s' % [ image.image, image.tag ],
-    '/usr/local/bin/dump-objects -sd /data',
-    fileext='.tar.gz'
+    '%s/%s:%s' % [ image.registry, image.image, image.tag ],
+    '/scripts/dump.sh ' + std.join(' ', std.map(function(ign) '-ignore=%s' % ign, params.ignored) + std.map(function(me) '-must-exist=%s' % me, params.must_exist)),
+    fileext='.tar'
   ) + namespaceMeta;
   pod {
     spec+: {
@@ -68,8 +67,8 @@ local objectDumper =
                   mountPath: '/home/dumper',
                 },
                 {
-                  name: 'config',
-                  mountPath: '/usr/local/share/k8s-object-dumper',
+                  name: 'scripts',
+                  mountPath: '/scripts',
                 },
               ],
             },
@@ -84,9 +83,10 @@ local objectDumper =
               emptyDir: {},
             },
             {
-              name: 'config',
+              name: 'scripts',
               configMap: {
                 name: objectDumperConfig.metadata.name,
+                defaultMode: 493,  // 0755
               },
             },
           ],

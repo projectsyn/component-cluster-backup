@@ -217,30 +217,21 @@ default:: `'?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/password}
 Password used to encrypt the backup.
 The default is a reference to a secret within Vault.
 
-== `known_to_fail`
+
+== `ignored`
 
 [horizontal]
 type:: list
-default::
-+
-[source,yaml]
-----
-- '.+mutators'
-- '.+reviews'
-- '.+validators'
-- 'bindings'
-- 'deploymentconfigrollbacks'
-- 'imagesignatures'
-- 'imagestreamimages'
-- 'imagestreamimports'
-- 'imagestreammappings'
-- 'mutations'
-- 'projectrequests'
-- 'useridentitymappings'
-- 'validations'
-----
+default:: `[]`
 
-Resource types which are known to produce errors when doing `kubectl get <resource>`.
+Resource types which will not be backed up.
+
+[NOTE]
+====
+It is no longer necessary to ignore resources with no `list` verb.
+The discovery automatically filters them out.
+====
+
 
 == `must_exist`
 
@@ -251,27 +242,31 @@ default::
 [source,yaml]
 ----
 - 'configmaps'
-- 'daemonsets'
-- 'deployments'
+- 'daemonsets.apps'
+- 'deployments.apps'
 - 'endpoints'
-- 'horizontalpodautoscalers'
-- 'ingresses'
-- 'jobs'
+- 'horizontalpodautoscalers.autoscaling'
+- 'ingresses.networking.k8s.io'
+- 'jobs.batch'
 - 'limitranges'
 - 'namespaces'
 - 'nodes'
 - 'persistentvolumeclaims'
 - 'persistentvolumes'
-- 'replicasets'
+- 'replicasets.apps'
 - 'resourcequotas'
-- 'roles'
+- 'roles.rbac.authorization.k8s.io'
 - 'secrets'
 - 'serviceaccounts'
 - 'services'
-- 'statefulsets'
+- 'statefulsets.apps'
 ----
 
 Resource types which must exist on any Kubernetes cluster.
+Used to sanity-check the backup process.
+
+They must be fully qualified resource types `<resource>.<group>`, e.g. `deployments.apps`.
+
 
 == Example
 

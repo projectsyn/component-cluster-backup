@@ -61,49 +61,24 @@ subjects:
 ---
 apiVersion: v1
 data:
-  known-to-fail: |-
-    .+mutators
-    .+reviews
-    .+validators
-    bindings
-    deploymentconfigrollbacks
-    imagesignatures
-    imagestreamimages
-    imagestreamimports
-    imagestreammappings
-    mutations
-    projectrequests
-    useridentitymappings
-    validations
-  must-exist: |-
-    configmaps
-    daemonsets
-    deployments
-    endpoints
-    horizontalpodautoscalers
-    ingresses
-    jobs
-    limitranges
-    namespaces
-    nodes
-    persistentvolumeclaims
-    persistentvolumes
-    replicasets
-    resourcequotas
-    roles
-    secrets
-    serviceaccounts
-    services
-    statefulsets
+  dump.sh: |
+    #!/bin/bash
+    set -euo pipefail
+
+    output_dir="/data"
+
+    k8s-object-dumper  "-dir" "${output_dir}" "$@"
+
+    ( cd "${output_dir}" && tar c . )
 kind: ConfigMap
 metadata:
   annotations: {}
   labels:
     app.kubernetes.io/component: cluster-backup
     app.kubernetes.io/managed-by: commodore
-    app.kubernetes.io/name: object-dumper
-    name: object-dumper
-  name: object-dumper
+    app.kubernetes.io/name: object-dumper-script
+    name: object-dumper-script
+  name: object-dumper-script
   namespace: syn-cluster-backup
 ---
 apiVersion: k8up.io/v1
@@ -116,8 +91,13 @@ metadata:
   name: object-dumper
   namespace: syn-cluster-backup
 spec:
-  backupCommand: /usr/local/bin/dump-objects -sd /data
-  fileExtension: .tar.gz
+  backupCommand: /scripts/dump.sh -must-exist=configmaps -must-exist=daemonsets.apps
+    -must-exist=deployments.apps -must-exist=endpoints -must-exist=horizontalpodautoscalers.autoscaling
+    -must-exist=ingresses.networking.k8s.io -must-exist=jobs.batch -must-exist=limitranges
+    -must-exist=namespaces -must-exist=nodes -must-exist=persistentvolumeclaims -must-exist=persistentvolumes
+    -must-exist=replicasets.apps -must-exist=resourcequotas -must-exist=roles.rbac.authorization.k8s.io
+    -must-exist=secrets -must-exist=serviceaccounts -must-exist=services -must-exist=statefulsets.apps
+  fileExtension: .tar
   pod:
     spec:
       containers:
@@ -129,7 +109,7 @@ spec:
           env:
             - name: HOME
               value: /home/dumper
-          image: docker.io/projectsyn/k8s-object-dumper:v0.2.3
+          image: ghcr.io/projectsyn/k8s-object-dumper:v0.3.0
           imagePullPolicy: IfNotPresent
           name: object-dumper
           ports: []
@@ -140,8 +120,8 @@ spec:
               name: data
             - mountPath: /home/dumper
               name: home
-            - mountPath: /usr/local/share/k8s-object-dumper
-              name: config
+            - mountPath: /scripts
+              name: scripts
       imagePullSecrets: []
       initContainers: []
       serviceAccountName: object-backup
@@ -152,8 +132,9 @@ spec:
         - emptyDir: {}
           name: home
         - configMap:
-            name: object-dumper
-          name: config
+            defaultMode: 493
+            name: object-dumper-script
+          name: scripts
 ---
 apiVersion: v1
 data: {}
