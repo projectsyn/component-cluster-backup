@@ -23,44 +23,15 @@ parameters:
       ssh_private_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/ssh_private_key}'
       ssh_public_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/ssh_public_key}'
       ssh_known_hosts: ''
-    known_to_fail:
-      - '.+mutators'
-      - '.+reviews'
-      - '.+validators'
-      - 'bindings'
-      - 'deploymentconfigrollbacks'
-      - 'imagesignatures'
-      - 'imagestreamimages'
-      - 'imagestreamimports'
-      - 'imagestreammappings'
-      - 'mutations'
-      - 'projectrequests'
-      - 'useridentitymappings'
-      - 'validations'
-    must_exist:
-      - 'configmaps'
-      - 'daemonsets'
-      - 'deployments'
-      - 'endpoints'
-      - 'horizontalpodautoscalers'
-      - 'ingresses'
-      - 'jobs'
-      - 'limitranges'
-      - 'namespaces'
-      - 'nodes'
-      - 'persistentvolumeclaims'
-      - 'persistentvolumes'
-      - 'replicasets'
-      - 'resourcequotas'
-      - 'roles'
-      - 'secrets'
-      - 'serviceaccounts'
-      - 'services'
-      - 'statefulsets'
+    ignored:
+      # OpenShift fucked up and shows the list api as enabled in the API-Discovery
+      - projectrequests.project.openshift.io
+    must_exist: []
     images:
       object_dumper:
-        image: docker.io/projectsyn/k8s-object-dumper
-        tag: v0.2.3
+        registry: ghcr.io
+        image: projectsyn/k8s-object-dumper
+        tag: v0.3.0
       etcd_backup:
         registry: docker.io
         image: debian

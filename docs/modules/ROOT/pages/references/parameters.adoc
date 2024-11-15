@@ -217,7 +217,8 @@ default:: `'?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/password}
 Password used to encrypt the backup.
 The default is a reference to a secret within Vault.
 
-== `known_to_fail`
+
+== `ignored`
 
 [horizontal]
 type:: list
@@ -225,53 +226,38 @@ default::
 +
 [source,yaml]
 ----
-- '.+mutators'
-- '.+reviews'
-- '.+validators'
-- 'bindings'
-- 'deploymentconfigrollbacks'
-- 'imagesignatures'
-- 'imagestreamimages'
-- 'imagestreamimports'
-- 'imagestreammappings'
-- 'mutations'
-- 'projectrequests'
-- 'useridentitymappings'
-- 'validations'
+ignored:
+  # OpenShift fucked up and shows the list api as enabled in the API-Discovery
+  - projectrequests.project.openshift.io
 ----
 
-Resource types which are known to produce errors when doing `kubectl get <resource>`.
+Resource types which will not be backed up.
+
+[NOTE]
+====
+It is usually no longer necessary to ignore resources with no `list` verb.
+The discovery automatically filters them out.
+====
+
 
 == `must_exist`
 
 [horizontal]
 type:: list
-default::
-+
-[source,yaml]
-----
-- 'configmaps'
-- 'daemonsets'
-- 'deployments'
-- 'endpoints'
-- 'horizontalpodautoscalers'
-- 'ingresses'
-- 'jobs'
-- 'limitranges'
-- 'namespaces'
-- 'nodes'
-- 'persistentvolumeclaims'
-- 'persistentvolumes'
-- 'replicasets'
-- 'resourcequotas'
-- 'roles'
-- 'secrets'
-- 'serviceaccounts'
-- 'services'
-- 'statefulsets'
-----
+default:: `[]`
 
 Resource types which must exist on any Kubernetes cluster.
+Used to sanity-check the backup process.
+
+They must be fully qualified resource types `<resource>.<group>`, e.g. `deployments.apps`.
+
+[IMPORTANT]
+====
+As of https://github.com/k8up-io/k8up/releases/tag/v2.11.1[k8up v2.11.1] the errors from backup commands are ignored (https://github.com/k8up-io/k8up/issues/910[issue]).
+
+This means that if a resource type listed in `must_exist` is not found, the backup will be created but it will be empty.
+For this reason, and because we trust the discovery process of the new dumper, we set the default value to an empty list and recommend to not use this feature until the issue is resolved.
+====
 
 == Example
 
