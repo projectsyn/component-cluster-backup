@@ -24,26 +24,7 @@ parameters:
       ssh_public_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/ssh_public_key}'
       ssh_known_hosts: ''
     ignored: []
-    must_exist:
-      - 'configmaps'
-      - 'daemonsets.apps'
-      - 'deployments.apps'
-      - 'endpoints'
-      - 'horizontalpodautoscalers.autoscaling'
-      - 'ingresses.networking.k8s.io'
-      - 'jobs.batch'
-      - 'limitranges'
-      - 'namespaces'
-      - 'nodes'
-      - 'persistentvolumeclaims'
-      - 'persistentvolumes'
-      - 'replicasets.apps'
-      - 'resourcequotas'
-      - 'roles.rbac.authorization.k8s.io'
-      - 'secrets'
-      - 'serviceaccounts'
-      - 'services'
-      - 'statefulsets.apps'
+    must_exist: []
     images:
       object_dumper:
         registry: ghcr.io

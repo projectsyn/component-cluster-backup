@@ -237,36 +237,20 @@ The discovery automatically filters them out.
 
 [horizontal]
 type:: list
-default::
-+
-[source,yaml]
-----
-- 'configmaps'
-- 'daemonsets.apps'
-- 'deployments.apps'
-- 'endpoints'
-- 'horizontalpodautoscalers.autoscaling'
-- 'ingresses.networking.k8s.io'
-- 'jobs.batch'
-- 'limitranges'
-- 'namespaces'
-- 'nodes'
-- 'persistentvolumeclaims'
-- 'persistentvolumes'
-- 'replicasets.apps'
-- 'resourcequotas'
-- 'roles.rbac.authorization.k8s.io'
-- 'secrets'
-- 'serviceaccounts'
-- 'services'
-- 'statefulsets.apps'
-----
+default:: `[]`
 
 Resource types which must exist on any Kubernetes cluster.
 Used to sanity-check the backup process.
 
 They must be fully qualified resource types `<resource>.<group>`, e.g. `deployments.apps`.
 
+[IMPORTANT]
+====
+As of https://github.com/k8up-io/k8up/releases/tag/v2.11.1[k8up v2.11.1] the errors from backup commands are ignored (https://github.com/k8up-io/k8up/issues/910[issue]).
+
+This means that if a resource type listed in `must_exist` is not found, the backup will be created but it will be empty.
+For this reason, and because we trust the discovery process of the new dumper, we set the default value to an empty list and recommend to not use this feature until the issue is resolved.
+====
 
 == Example
 

@@ -91,12 +91,7 @@ metadata:
   name: object-dumper
   namespace: syn-cluster-backup
 spec:
-  backupCommand: /scripts/dump.sh -must-exist=configmaps -must-exist=daemonsets.apps
-    -must-exist=deployments.apps -must-exist=endpoints -must-exist=horizontalpodautoscalers.autoscaling
-    -must-exist=ingresses.networking.k8s.io -must-exist=jobs.batch -must-exist=limitranges
-    -must-exist=namespaces -must-exist=nodes -must-exist=persistentvolumeclaims -must-exist=persistentvolumes
-    -must-exist=replicasets.apps -must-exist=resourcequotas -must-exist=roles.rbac.authorization.k8s.io
-    -must-exist=secrets -must-exist=serviceaccounts -must-exist=services -must-exist=statefulsets.apps
+  backupCommand: '/scripts/dump.sh '
   fileExtension: .tar
   pod:
     spec:
