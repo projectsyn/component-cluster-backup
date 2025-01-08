@@ -4,7 +4,7 @@ parameters:
       - input_paths:
           - cluster-backup/component/app.jsonnet
         input_type: jsonnet
-        output_path: apps/
+        output_path: .
       - input_paths:
           - cluster-backup/component/main.jsonnet
         input_type: jsonnet

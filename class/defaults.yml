@@ -1,5 +1,7 @@
 parameters:
   cluster_backup:
+    =_metadata:
+      multi_tenant: true
     # This switch is required to selectively disable the component
     # TODO: Reevaluate the need for this once we can remove components
     # See: https://github.com/projectsyn/commodore/issues/71
