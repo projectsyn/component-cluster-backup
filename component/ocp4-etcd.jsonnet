@@ -26,7 +26,7 @@ local scc = kube._Object('security.openshift.io/v1', 'SecurityContextConstraints
   allowPrivilegedContainer: true,
   allowHostNetwork: true,
   allowHostDirVolumePlugin: true,
-  allowedCapabilities: [],
+  allowedCapabilities: null,
   allowHostPorts: false,
   allowHostPID: false,
   allowHostIPC: false,
