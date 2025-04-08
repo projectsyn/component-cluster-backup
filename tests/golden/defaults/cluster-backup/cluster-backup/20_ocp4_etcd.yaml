@@ -28,7 +28,7 @@ allowHostNetwork: true
 allowHostPID: false
 allowHostPorts: false
 allowPrivilegedContainer: true
-allowedCapabilities: []
+allowedCapabilities: null
 apiVersion: security.openshift.io/v1
 defaultAddCapabilities: []
 fsGroup:
