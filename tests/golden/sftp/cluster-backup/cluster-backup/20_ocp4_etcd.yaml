@@ -246,6 +246,11 @@ spec:
     repoPasswordSecretRef:
       key: password
       name: etcd-backup-password
+    tlsOptions:
+      caCert: |
+        -----BEGIN CERTIFICATE-----
+        MY AWESOME CA
+        -----END CERTIFICATE-----
     volumeMounts:
       - mountPath: /home/k8up/.ssh
         name: ssh-config

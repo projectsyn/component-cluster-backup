@@ -49,6 +49,7 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
     backupkey=backupSecretRef,
     s3secret=bucketSecretRef,
     create_bucket=false,
+    tls_options=params.tls_options,
   ).schedule + backup.PruneSpec(pruneSchedule, 30, 20) {
     metadata+: {
       namespace: namespace,
