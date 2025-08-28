@@ -237,7 +237,11 @@ spec:
     repoPasswordSecretRef:
       key: password
       name: objects-backup-password
+    tlsOptions:
+      caCert: /mnt/ca/ca.crt
     volumeMounts:
+      - mountPath: /mnt/ca/
+        name: ca
       - mountPath: /home/k8up/.ssh
         name: ssh-config
       - mountPath: /home/k8up/.job
@@ -247,6 +251,10 @@ spec:
   backup:
     keepJobs: 5
     schedule: 25 * * * *
+    volumes:
+      - configMap:
+          name: k8up-custom-ca
+        name: ca
   check:
     schedule: 30 3 * * *
   podConfigRef:
@@ -256,3 +264,18 @@ spec:
       keepDaily: 30
       keepLast: 20
     schedule: 10 */4 * * *
+---
+apiVersion: v1
+data:
+  ca.crt: |
+    -----BEGIN CERTIFICATE-----
+    MY AWESOME CA
+    -----END CERTIFICATE-----
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: cluster-backup
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: k8up-custom-ca
+  name: k8up-custom-ca
+  namespace: syn-cluster-backup

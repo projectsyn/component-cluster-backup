@@ -41,6 +41,19 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
     secretkeyname: 'password',
   };
 
+  local customCA = if params.customCA != null then {
+    apiVersion: 'v1',
+    kind: 'ConfigMap',
+    metadata: {
+      name: 'k8up-custom-ca',
+      namespace: namespace,
+    },
+    data: {
+      'ca.crt': params.customCA,
+    },
+  };
+  local customCAname = if params.customCA != null then 'k8up-custom-ca' else null;
+
   local schedule = backup.Schedule(
     name,
     backupSchedule,
@@ -49,6 +62,7 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
     backupkey=backupSecretRef,
     s3secret=bucketSecretRef,
     create_bucket=false,
+    caConfigMap=customCAname,
   ).schedule + backup.PruneSpec(pruneSchedule, 30, 20) {
     metadata+: {
       namespace: namespace,
@@ -148,7 +162,7 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
       backend+: {
         // drop S3 config
         s3:: {},
-        volumeMounts: [
+        volumeMounts+: [
           {
             name: 'ssh-config',
             mountPath: '/home/k8up/.ssh',
@@ -168,9 +182,9 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
 
 
   if params.backend_type == 's3' then
-    [ backupSecret, bucketSecret, schedule ]
+    [ backupSecret, bucketSecret, schedule ] + if params.customCA != null then [ customCA ] else []
   else if params.backend_type == 'sftp' then
-    [ backupSecret, sftpRepository, sftpConfig, sftpPodConfig, sftpSchedule ]
+    [ backupSecret, sftpRepository, sftpConfig, sftpPodConfig, sftpSchedule ] + if params.customCA != null then [ customCA ] else []
   else
     error "Backup backend type '%s' not supported by the component" % params.backend_type;
 
