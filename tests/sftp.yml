@@ -5,7 +5,7 @@ parameters:
   kapitan:
     dependencies:
       - type: https
-        source: https://raw.githubusercontent.com/projectsyn/component-backup-k8up/v5.3.0/lib/backup-k8up.libjsonnet
+        source: https://raw.githubusercontent.com/projectsyn/component-backup-k8up/master/lib/backup-k8up.libjsonnet
         output_path: vendor/lib/backup-k8up.libjsonnet
 
   backup_k8up:
@@ -18,3 +18,8 @@ parameters:
     sftp:
       ssh_known_hosts: |
         sftp.example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPSszUbK2KmbjXKSWCajPlTCR8GBCElkd2I1ciBari3k
+    tls_options:
+      caCert: |
+        -----BEGIN CERTIFICATE-----
+        MY AWESOME CA
+        -----END CERTIFICATE-----
