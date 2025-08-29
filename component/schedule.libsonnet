@@ -52,7 +52,7 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
       'ca.crt': params.customCA,
     },
   };
-  local customCAname = if params.customCA != null then 'k8up-custom-ca' else null;
+  local customCAname = if params.customCA != null then customCA.metadata.name else null;
 
   local schedule = backup.Schedule(
     name,
