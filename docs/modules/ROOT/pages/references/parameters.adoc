@@ -259,13 +259,13 @@ This means that if a resource type listed in `must_exist` is not found, the back
 For this reason, and because we trust the discovery process of the new dumper, we set the default value to an empty list and recommend to not use this feature until the issue is resolved.
 ====
 
-== tls_options
+== customCA
 
 [horizontal]
 type:: dict
 default:: `null`
 
-Set TLS options for accessig the backend.
+Configure a custom CA for connecting to the backend.
 
 == Example
 
@@ -276,9 +276,8 @@ parameters:
     images:
       object_dumper:
         tag: v…
-    tls_options:
-      caCert: |
-        -----BEGIN CERTIFICATE-----
-        MY AWESOME CA
-        -----END CERTIFICATE-----
+    customCA: |
+      -----BEGIN CERTIFICATE-----
+      MY AWESOME CA
+      -----END CERTIFICATE-----
 ----

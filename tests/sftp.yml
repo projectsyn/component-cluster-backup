@@ -18,8 +18,7 @@ parameters:
     sftp:
       ssh_known_hosts: |
         sftp.example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPSszUbK2KmbjXKSWCajPlTCR8GBCElkd2I1ciBari3k
-    tls_options:
-      caCert: |
-        -----BEGIN CERTIFICATE-----
-        MY AWESOME CA
-        -----END CERTIFICATE-----
+    customCA: |
+      -----BEGIN CERTIFICATE-----
+      MY AWESOME CA
+      -----END CERTIFICATE-----

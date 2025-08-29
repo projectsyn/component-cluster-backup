@@ -38,4 +38,4 @@ parameters:
         registry: docker.io
         image: debian
         tag: bullseye
-    tls_options: null
+    customCA: null
