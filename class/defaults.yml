@@ -9,7 +9,7 @@ parameters:
     namespace: syn-cluster-backup
     keepjobs: 5
     password: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/password}'
-    # supported options, currently s3 and sftp
+    # supported options, currently s3, sftp and azure
     backend_type: s3
     bucket:
       name: '${cluster:name}-cluster-backup'
@@ -25,6 +25,10 @@ parameters:
       ssh_private_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/ssh_private_key}'
       ssh_public_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/ssh_public_key}'
       ssh_known_hosts: ''
+    azure:
+      container: '${cluster:name}-cluster-backup'
+      account_name: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/azure_account_name}'
+      account_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/azure_account_key}'
     ignored:
       # OpenShift fucked up and shows the list api as enabled in the API-Discovery
       - projectrequests.project.openshift.io

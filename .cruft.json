@@ -7,7 +7,7 @@
       "name": "Cluster Backup",
       "slug": "cluster-backup",
       "parameter_key": "cluster_backup",
-      "test_cases": "defaults sftp",
+      "test_cases": "defaults sftp azure",
       "add_lib": "n",
       "add_pp": "n",
       "add_golden": "y",

@@ -180,11 +180,42 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
     },
   };
 
+  local azureSecret = kube.Secret('%s-backup-azure-credentials' % name) {
+    metadata+: {
+      namespace: namespace,
+    },
+    stringData: {
+      account_name: params.azure.account_name,
+      account_key: params.azure.account_key,
+    },
+  };
+
+  local azureSchedule = schedule {
+    spec+: {
+      backend+: {
+        // drop S3 config
+        s3:: {},
+        azure: {
+          container: params.azure.container,
+          accountNameSecretRef: {
+            name: azureSecret.metadata.name,
+            key: 'account_name',
+          },
+          accountKeySecretRef: {
+            name: azureSecret.metadata.name,
+            key: 'account_key',
+          },
+        },
+      },
+    },
+  };
 
   if params.backend_type == 's3' then
     [ backupSecret, bucketSecret, schedule ] + if params.customCA != null then [ customCA ] else []
   else if params.backend_type == 'sftp' then
     [ backupSecret, sftpRepository, sftpConfig, sftpPodConfig, sftpSchedule ] + if params.customCA != null then [ customCA ] else []
+  else if params.backend_type == 'azure' then
+    [ backupSecret, azureSecret, azureSchedule ] + if params.customCA != null then [ customCA ] else []
   else
     error "Backup backend type '%s' not supported by the component" % params.backend_type;
 
