@@ -27,10 +27,10 @@ The namespace in which to deploy this component.
 [horizontal]
 type:: string
 default:: `s3`
-values:: `s3`, `sftp`
+values:: `s3`, `sftp`, `azure`
 
 Which backend type to configure for the backup.
-Currently, the component supports backing up to S3 (compatible) buckets and SFTP.
+Currently, the component supports backing up to S3 (compatible) buckets, SFTP and Azure Blob Storage.
 
 == `bucket`
 
@@ -161,6 +161,44 @@ type:: string
 default:: `''`
 
 The provided value is used verbatim as the contents for the backup job's `~/.ssh/known_hosts`.
+
+== `azure`
+
+[horizontal]
+type:: dictionary
+
+This section holds the Azure Blob Storage configuration.
+When `backend_type` is set to `azure`, the backups are stored in an Azure Blob Storage container using K8up's native Azure backend.
+The backup job authenticates with the storage account name and an account key.
+
+TIP: The Azure configuration is ignored when `backend_type` isn't set to `azure`.
+
+=== `container`
+
+[horizontal]
+type:: string
+default:: `${cluster:name}-cluster-backup`
+
+The name of the Azure Blob Storage container.
+The backup repository is stored at the root of this container.
+
+=== `account_name`
+
+[horizontal]
+type:: string
+default:: `'?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/azure_account_name}'`
+
+The name of the Azure storage account which holds the container.
+The default is a reference to a secret within Vault.
+
+=== `account_key`
+
+[horizontal]
+type:: string
+default:: `'?{vaultkv:${cluster:tenant}/${cluster:name}/cluster-backup/azure_account_key}'`
+
+An access key for the Azure storage account.
+The default is a reference to a secret within Vault.
 
 == `images`
 
