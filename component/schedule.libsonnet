@@ -118,6 +118,10 @@ local buildSchedule(name, namespace, backupSchedule, pruneSchedule='10 */4 * * *
                   value: '/home/k8up',
                 },
                 {
+                  name: 'RESTIC_CACHE_DIR',
+                  value: '/.cache',
+                },
+                {
                   name: 'RESTIC_REPOSITORY_FILE',
                   value: '/home/k8up/.job/repository',
                 },

@@ -215,6 +215,8 @@ spec:
         - env:
             - name: HOME
               value: /home/k8up
+            - name: RESTIC_CACHE_DIR
+              value: /.cache
             - name: RESTIC_REPOSITORY_FILE
               value: /home/k8up/.job/repository
             - name: RESTIC_PASSWORD_FILE
